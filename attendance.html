@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JNTU Attendance Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1628;
+    --card: #131c35;
+    --card2: #1a2540;
+    --border: #1e2d50;
+    --accent: #2563eb;
+    --accent2: #3b82f6;
+    --accent3: #60a5fa;
+    --gold: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --orange: #f97316;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    --radius: 16px;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; }
+
+  /* HEADER */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--font-head); font-weight: 800; font-size: 1.25rem; color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px; background: var(--accent);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 800; color: #fff;
+  }
+  .logo span { color: var(--accent3); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-user {
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    padding: 6px 12px; border-radius: 10px; transition: background 0.2s;
+  }
+  .header-user:hover { background: var(--card); }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: #fff;
+  }
+  .btn-logout {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text2); padding: 7px 16px; border-radius: 8px;
+    font-family: var(--font-body); font-size: 0.85rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-logout:hover { border-color: var(--accent); color: var(--accent3); }
+
+  /* NAV TABS */
+  .nav-tabs {
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    display: flex; padding: 0 32px; gap: 4px;
+  }
+  .nav-tab {
+    padding: 14px 20px; font-family: var(--font-body); font-size: 0.9rem; font-weight: 500;
+    color: var(--text3); border: none; background: none; cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--text2); }
+  .nav-tab.active { color: var(--accent3); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main { padding: 32px; max-width: 1400px; margin: 0 auto; }
+
+  /* PAGE TITLE */
+  .page-header { margin-bottom: 28px; }
+  .page-title { font-family: var(--font-head); font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
+  .page-subtitle { color: var(--text2); font-size: 0.9rem; margin-top: 4px; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+
+  /* CARD */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow); transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card-title {
+    font-family: var(--font-head); font-weight: 700; font-size: 1rem;
+    color: var(--text); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .icon { font-size: 1.1rem; }
+
+  /* AUTH PAGES */
+  .auth-wrapper {
+    min-height: calc(100vh - 64px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+    background: radial-gradient(ellipse at 30% 40%, rgba(37,99,235,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(96,165,250,0.05) 0%, transparent 50%);
+  }
+  .auth-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px; width: 100%; max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .auth-title { font-family: var(--font-head); font-size: 1.7rem; font-weight: 800; margin-bottom: 6px; }
+  .auth-subtitle { color: var(--text2); font-size: 0.9rem; margin-bottom: 32px; }
+  .form-row { margin-bottom: 18px; }
+  .form-row label { display: block; font-size: 0.83rem; font-weight: 500; color: var(--text2); margin-bottom: 7px; letter-spacing: 0.3px; }
+  .form-row input, .form-row select {
+    width: 100%; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 14px; font-family: var(--font-body); font-size: 0.9rem;
+    color: var(--text); outline: none; transition: border-color 0.2s;
+    appearance: none;
+  }
+  .form-row input:focus, .form-row select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+  .form-row input::placeholder { color: var(--text3); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .btn-primary {
+    width: 100%; padding: 13px; background: var(--accent);
+    color: #fff; border: none; border-radius: 10px; font-family: var(--font-head);
+    font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s;
+    margin-top: 8px; letter-spacing: 0.3px;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
+  .auth-link { text-align: center; margin-top: 20px; font-size: 0.88rem; color: var(--text2); }
+  .auth-link a { color: var(--accent3); text-decoration: none; font-weight: 500; }
+  .auth-link a:hover { text-decoration: underline; }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; color: var(--text3); font-size: 0.8rem; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ATTENDANCE CARD */
+  .attendance-big { font-family: var(--font-head); font-size: 4rem; font-weight: 800; line-height: 1; }
+  .progress-ring-wrap { display: flex; align-items: center; gap: 28px; }
+  .ring-container { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+  .ring-container svg { transform: rotate(-90deg); }
+  .ring-label {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-family: var(--font-head); font-weight: 800; font-size: 1.1rem; color: var(--text);
+  }
+  .status-badge {
+    display: inline-block; padding: 4px 12px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600; margin-top: 8px;
+  }
+  .status-safe { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .status-warn { background: rgba(245,158,11,0.15); color: var(--gold); border: 1px solid rgba(245,158,11,0.3); }
+  .status-crit { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+  /* SUBJECT LIST */
+  .subject-row {
+    display: grid; grid-template-columns: 1fr auto auto auto auto;
+    gap: 12px; align-items: center; padding: 10px 0;
+    border-bottom: 1px solid var(--border); font-size: 0.88rem;
+  }
+  .subject-row:last-child { border-bottom: none; }
+  .subject-name { font-weight: 500; color: var(--text); }
+  .mark-cell { text-align: center; color: var(--text2); font-size: 0.83rem; }
+  .mark-head { font-size: 0.75rem; color: var(--text3); font-weight: 600; letter-spacing: 0.5px; }
+
+  /* MID MARKS */
+  .mid-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .mid-row:last-child { border-bottom: none; }
+  .mid-subject { font-weight: 500; font-size: 0.88rem; margin-bottom: 8px; }
+  .mid-bars { display: flex; gap: 12px; }
+  .mid-bar-wrap { flex: 1; }
+  .mid-bar-label { font-size: 0.75rem; color: var(--text3); margin-bottom: 4px; }
+  .mid-bar-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .mid-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+  .bar-good { background: var(--green); }
+  .bar-warn { background: var(--gold); }
+  .bar-bad { background: var(--red); }
+  .need-imp { font-size: 0.72rem; color: var(--red); margin-top: 4px; }
+
+  /* CALENDAR */
+  .cal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .month-card { background: var(--bg2); border-radius: 10px; padding: 12px; }
+  .month-name { font-size: 0.75rem; font-weight: 700; color: var(--accent3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .day-cell {
+    font-size: 0.65rem; height: 20px; display: flex; align-items: center; justify-content: center;
+    border-radius: 4px; color: var(--text2); cursor: default;
+  }
+  .day-cell.exam { background: rgba(239,68,68,0.25); color: var(--red); font-weight: 700; }
+  .day-cell.holiday { background: rgba(16,185,129,0.2); color: var(--green); font-weight: 700; }
+  .day-cell.fee { background: rgba(245,158,11,0.2); color: var(--gold); font-weight: 700; }
+  .day-cell.today { background: var(--accent); color: #fff; font-weight: 700; }
+  .cal-legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text2); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* FEE */
+  .fee-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .fee-row:last-child { border-bottom: none; }
+  .fee-label { font-size: 0.85rem; color: var(--text2); }
+  .fee-val { font-weight: 600; font-size: 0.9rem; }
+  .fee-bar-track { height: 8px; background: var(--border); border-radius: 4px; margin: 16px 0; overflow: hidden; }
+  .fee-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--accent3)); border-radius: 4px; }
+
+  /* TEACHER */
+  .teacher-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; text-align: center;
+    transition: border-color 0.2s;
+  }
+  .teacher-card:hover { border-color: var(--accent); }
+  .teacher-avatar {
+    width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 10px;
+    background: linear-gradient(135deg, #1e3a5f, var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head); font-weight: 800; font-size: 1.2rem; color: #fff;
+  }
+  .teacher-name { font-weight: 600; font-size: 0.88rem; margin-bottom: 3px; }
+  .teacher-sub { font-size: 0.75rem; color: var(--accent3); margin-bottom: 2px; }
+  .teacher-dept { font-size: 0.72rem; color: var(--text3); margin-bottom: 8px; }
+  .teacher-email { font-size: 0.72rem; color: var(--text2); }
+
+  /* CHART */
+  .chart-bars { display: flex; align-items: flex-end; gap: 8px; height: 80px; margin: 16px 0; }
+  .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .chart-bar {
+    width: 100%; border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--accent3), var(--accent));
+    transition: height 0.8s ease;
+  }
+  .chart-bar-label { font-size: 0.68rem; color: var(--text3); }
+  .chart-bar-val { font-size: 0.7rem; color: var(--text2); font-weight: 600; }
+
+  /* TIMETABLE */
+  .tt-table-wrap { overflow-x: auto; }
+  .tt-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+  .tt-table th {
+    padding: 10px 12px; background: var(--bg2); color: var(--text2);
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.3px; text-align: center;
+    border: 1px solid var(--border);
+  }
+  .tt-table td {
+    padding: 10px 12px; border: 1px solid var(--border); text-align: center;
+    font-size: 0.82rem; vertical-align: middle;
+  }
+  .tt-day { font-weight: 700; color: var(--accent3); background: var(--bg2); width: 90px; }
+  .tt-cell { background: var(--card2); }
+  .tt-cell .sub { font-weight: 500; color: var(--text); }
+  .tt-cell .prof { font-size: 0.72rem; color: var(--text2); }
+  .tt-cell .room { font-size: 0.7rem; color: var(--text3); }
+  .tt-lab { background: rgba(37,99,235,0.1); }
+  .tt-break { background: rgba(245,158,11,0.08); color: var(--text3); font-size: 0.78rem; }
+
+  /* RESULTS */
+  .results-filter { display: flex; gap: 12px; align-items: center; margin-bottom: 20px; }
+  .results-filter select {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; color: var(--text); font-family: var(--font-body); font-size: 0.88rem;
+    outline: none; cursor: pointer;
+  }
+  .results-table { width: 100%; border-collapse: collapse; }
+  .results-table th {
+    padding: 10px 14px; background: var(--bg2); color: var(--text2);
+    font-size: 0.78rem; font-weight: 600; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .results-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .results-table tr:hover td { background: var(--card2); }
+  .grade-badge {
+    padding: 2px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;
+    display: inline-block;
+  }
+  .grade-A { background: rgba(16,185,129,0.15); color: var(--green); }
+  .grade-B { background: rgba(96,165,250,0.15); color: var(--accent3); }
+  .grade-C { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .grade-F { background: rgba(239,68,68,0.15); color: var(--red); }
+
+  /* NOTIFICATIONS */
+  .notif-item {
+    display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border);
+    transition: background 0.15s; cursor: pointer;
+  }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 6px; flex-shrink: 0; }
+  .notif-dot.read { background: var(--text3); }
+  .notif-content { flex: 1; }
+  .notif-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 3px; }
+  .notif-msg { font-size: 0.82rem; color: var(--text2); margin-bottom: 5px; }
+  .notif-date { font-size: 0.72rem; color: var(--text3); }
+  .notif-badge {
+    padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600;
+    align-self: flex-start; white-space: nowrap;
+  }
+  .notif-badge.unread { background: rgba(37,99,235,0.2); color: var(--accent3); }
+  .notif-badge.read-b { background: var(--border); color: var(--text3); }
+  .btn-secondary {
+    background: transparent; border: 1px solid var(--accent); color: var(--accent3);
+    padding: 8px 18px; border-radius: 8px; font-family: var(--font-body); font-size: 0.85rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(37,99,235,0.1); }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 24px; color: var(--text3); font-size: 0.8rem;
+    border-top: 1px solid var(--border); margin-top: 40px;
+  }
+
+  /* ERROR/SUCCESS */
+  .form-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; }
+  .form-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: var(--green); padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .col-span-2, .col-span-3 { grid-column: span 1; }
+    main { padding: 20px; }
+    header { padding: 0 16px; }
+    .nav-tabs { padding: 0 16px; overflow-x: auto; }
+    .cal-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .progress-ring-wrap { flex-direction: column; }
+    .cal-grid { grid-template-columns: repeat(2, 1fr); }
+    .logo span.full { display: none; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .animate { animation: fadeUp 0.4s ease both; }
+  .animate-d1 { animation-delay: 0.05s; }
+  .animate-d2 { animation-delay: 0.1s; }
+  .animate-d3 { animation-delay: 0.15s; }
+  .animate-d4 { animation-delay: 0.2s; }
+  .animate-d5 { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ============================================================
+// MOCK DATA
+// ============================================================
+const MOCK_USER = { name: "Arjun Reddy", roll: "22A91A0501", branch: "CSE", semester: "5", email: "arjun@jntu.ac.in" };
+
+const MOCK_ATTENDANCE = {
+  overall: 87,
+  subjects: [
+    { name: "Data Structures & Algorithms", total: 60, attended: 55 },
+    { name: "Database Management Systems", total: 58, attended: 48 },
+    { name: "Computer Networks", total: 56, attended: 50 },
+    { name: "Software Engineering", total: 54, attended: 46 },
+    { name: "Operating Systems", total: 60, attended: 54 },
+    { name: "DBMS Lab", total: 30, attended: 28 },
+    { name: "Networks Lab", total: 28, attended: 25 },
+  ]
+};
+
+const MOCK_MARKS = [
+  { subject: "DSA", mid1: 24, mid2: 22, end: 68, total: 114, grade: "A" },
+  { subject: "DBMS", mid1: 19, mid2: 21, end: 62, total: 102, grade: "B" },
+  { subject: "Computer Networks", mid1: 23, mid2: 24, end: 70, total: 117, grade: "A" },
+  { subject: "Software Engg", mid1: 18, mid2: 16, end: 55, total: 89, grade: "C" },
+  { subject: "Operating Systems", mid1: 22, mid2: 23, end: 66, total: 111, grade: "A" },
+  { subject: "DBMS Lab", mid1: 24, mid2: 25, end: 46, total: 95, grade: "A" },
+  { subject: "Networks Lab", mid1: 20, mid2: 22, end: 42, total: 84, grade: "B" },
+];
+
+const MOCK_CGPA = [
+  { sem: "Sem 1", gpa: 7.2 }, { sem: "Sem 2", gpa: 7.8 },
+  { sem: "Sem 3", gpa: 8.1 }, { sem: "Sem 4", gpa: 8.4 }, { sem: "Sem 5", gpa: 8.7 },
+];
+
+const MOCK_FEE = { total: 95000, paid: 70000, pending: 25000, dueDate: "15 Dec 2024", status: "Partially Paid" };
+
+const MOCK_TEACHERS = [
+  { name: "Prof. R. Ramesh", sub: "DSA", dept: "CSE", email: "ramesh@jntu.ac.in" },
+  { name: "Prof. S. Suresh", sub: "DBMS", dept: "CSE", email: "suresh@jntu.ac.in" },
+  { name: "Prof. M. Kumar", sub: "Networks", dept: "CSE", email: "mkumar@jntu.ac.in" },
+  { name: "Prof. P. Devi", sub: "Software Engg", dept: "CSE", email: "pdevi@jntu.ac.in" },
+  { name: "Prof. V. Rao", sub: "OS", dept: "CSE", email: "vrao@jntu.ac.in" },
+  { name: "Prof. L. Rani", sub: "DBMS Lab", dept: "CSE", email: "lrani@jntu.ac.in" },
+];
+
+const MOCK_TIMETABLE = [
+  { day: "Monday", periods: ["DSA\nProf.Ramesh\nRoom 201", "DBMS\nProf.Suresh\nRoom 302", "Break", "Networks\nProf.Kumar\nRoom 101", "OS\nProf.Rao\nRoom 205", "Software Engg\nProf.Devi\nRoom 301", ""] },
+  { day: "Tuesday", periods: ["DBMS\nProf.Suresh\nRoom 302", "OS\nProf.Rao\nRoom 205", "Break", "DSA\nProf.Ramesh\nRoom 201", "DBMS Lab\nProf.Suresh\nLab 103", "DBMS Lab\nProf.Suresh\nLab 103", ""] },
+  { day: "Wednesday", periods: ["Networks\nProf.Kumar\nRoom 101", "Software Engg\nProf.Devi\nRoom 301", "Break", "DSA\nProf.Ramesh\nRoom 201", "OS\nProf.Rao\nRoom 205", "", ""] },
+  { day: "Thursday", periods: ["Software Engg\nProf.Devi\nRoom 301", "Networks\nProf.Kumar\nRoom 101", "Break", "Networks Lab\nProf.Kumar\nLab 204", "Networks Lab\nProf.Kumar\nLab 204", "DBMS\nProf.Suresh\nRoom 302", ""] },
+  { day: "Friday", periods: ["OS\nProf.Rao\nRoom 205", "DSA\nProf.Ramesh\nRoom 201", "Break", "Software Engg\nProf.Devi\nRoom 301", "DBMS\nProf.Suresh\nRoom 302", "Networks\nProf.Kumar\nRoom 101", ""] },
+  { day: "Saturday", periods: ["DSA\nProf.Ramesh\nRoom 201", "OS\nProf.Rao\nRoom 205", "Break", "", "", "", ""] },
+];
+
+const MOCK_RESULTS = [
+  { sem: "Sem 5", subject: "DSA", mid1: 24, mid2: 22, end: 68, total: 114, grade: "A" },
+  { sem: "Sem 5", subject: "DBMS", mid1: 19, mid2: 21, end: 62, total: 102, grade: "B" },
+  { sem: "Sem 5", subject: "Computer Networks", mid1: 23, mid2: 24, end: 70, total: 117, grade: "A" },
+  { sem: "Sem 5", subject: "Software Engg", mid1: 18, mid2: 16, end: 55, total: 89, grade: "C" },
+  { sem: "Sem 5", subject: "Operating Systems", mid1: 22, mid2: 23, end: 66, total: 111, grade: "A" },
+  { sem: "Sem 4", subject: "Mathematics IV", mid1: 23, mid2: 22, end: 66, total: 111, grade: "A" },
+  { sem: "Sem 4", subject: "Microprocessors", mid1: 20, mid2: 21, end: 60, total: 101, grade: "B" },
+  { sem: "Sem 4", subject: "Automata Theory", mid1: 24, mid2: 25, end: 72, total: 121, grade: "A" },
+  { sem: "Sem 3", subject: "Mathematics III", mid1: 21, mid2: 22, end: 64, total: 107, grade: "B" },
+  { sem: "Sem 3", subject: "Data Structures", mid1: 22, mid2: 24, end: 68, total: 114, grade: "A" },
+];
+
+const MOCK_NOTIFICATIONS = [
+  { id: 1, title: "Fee Due Reminder", message: "Your semester fee of ₹25,000 is due by Dec 15, 2024. Please pay to avoid penalty.", date: "Nov 28, 2024", isRead: false },
+  { id: 2, title: "Mid-2 Exam Schedule Released", message: "Mid-2 examinations are scheduled from Dec 10-14, 2024. Check the timetable.", date: "Nov 25, 2024", isRead: false },
+  { id: 3, title: "Holiday Notice", message: "College will remain closed on Dec 2 for Telangana Formation Day.", date: "Nov 22, 2024", isRead: true },
+  { id: 4, title: "Attendance Warning", message: "DBMS attendance is at 82%. Minimum 75% required. Please attend regularly.", date: "Nov 18, 2024", isRead: true },
+  { id: 5, title: "Project Submission", message: "Software Engineering project submission deadline is Nov 30, 2024.", date: "Nov 15, 2024", isRead: true },
+  { id: 6, title: "Sports Day Event", message: "Annual sports day on Dec 5, 2024. Register your events in the sports office.", date: "Nov 10, 2024", isRead: true },
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  page: "register", // register | login | home
+  homeTab: "dashboard", // dashboard | timetable | results | notifications
+  user: null,
+  notifications: [...MOCK_NOTIFICATIONS],
+  error: "",
+  success: "",
+};
+
+// ============================================================
+// HELPER FUNCTIONS
+// ============================================================
+function getInitials(name) { return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0,2); }
+function pct(a,b) { return Math.round(a/b*100); }
+function getGradeClass(g) { return {A:"grade-A",B:"grade-B",C:"grade-C",F:"grade-F"}[g]||"grade-B"; }
+function getBarClass(v, max=25) {
+  const p = v/max*100;
+  return p >= 70 ? "bar-good" : p >= 50 ? "bar-warn" : "bar-bad";
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = buildHeader() + buildBody();
+}
+
+function buildHeader() {
+  if (state.page === "register" || state.page === "login") {
+    return `<header>
+      <div class="logo">
+        <div class="logo-icon">JN</div>
+        <span>JNTU<span> <span class="full">Attendance Profile</span></span>
+      </div>
+      <div class="header-right">
+        <span style="font-size:0.82rem;color:var(--text3);">Jawaharlal Nehru Technological University</span>
+      </div>
+    </header>`;
+  }
+  const unread = state.notifications.filter(n=>!n.isRead).length;
+  return `<header>
+    <div class="logo">
+      <div class="logo-icon">JN</div>
+      <span>JNTU<span> <span class="full">Attendance Profile</span></span>
+    </div>
+    <div class="header-right">
+      <div class="header-user">
+        <div class="avatar">${getInitials(state.user.name)}</div>
+        <div>
+          <div style="font-size:0.85rem;font-weight:600;">${state.user.name}</div>
+          <div style="font-size:0.72rem;color:var(--text3);">${state.user.roll} • ${state.user.branch}</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </header>`;
+}
+
+function buildBody() {
+  if (state.page === "register") return buildRegister();
+  if (state.page === "login") return buildLogin();
+  if (state.page === "home") return buildHome();
+  return "";
+}
+
+// ============================================================
+// REGISTER PAGE
+// ============================================================
+function buildRegister() {
+  return `
+  <div class="auth-wrapper">
+    <div class="auth-card animate">
+      <div class="auth-title">Create Account</div>
+      <div class="auth-subtitle">Register with your JNTU credentials</div>
+      ${state.error ? `<div class="form-error">${state.error}</div>` : ""}
+      ${state.success ? `<div class="form-success">${state.success}</div>` : ""}
+      <div class="form-row">
+        <label>Full Name</label>
+        <input type="text" id="reg-name" placeholder="Enter your full name"/>
+      </div>
+      <div class="form-row">
+        <label>JNTU Roll Number</label>
+        <input type="text" id="reg-roll" placeholder="e.g. 22A91A0501"/>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Branch</label>
+          <select id="reg-branch">
+            <option value="">Select Branch</option>
+            <option>CSE</option><option>ECE</option><option>EEE</option>
+            <option>IT</option><option>MECH</option><option>CIVIL</option>
+            <option>CHEM</option><option>AI&ML</option><option>DS</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Semester</label>
+          <select id="reg-sem">
+            <option value="">Select Sem</option>
+            ${[1,2,3,4,5,6,7,8].map(s=>`<option>${s}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Email Address</label>
+        <input type="email" id="reg-email" placeholder="your@email.com"/>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Password</label>
+          <input type="password" id="reg-pass" placeholder="Create password"/>
+        </div>
+        <div class="form-row">
+          <label>Confirm Password</label>
+          <input type="password" id="reg-cpass" placeholder="Confirm password"/>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="handleRegister()">Create Account</button>
+      <div class="auth-link">Already have an account? <a href="#" onclick="goTo('login');return false;">Login here</a></div>
+    </div>
+  </div>
+  <footer>© 2024 JNTU Hyderabad • Jawaharlal Nehru Technological University</footer>`;
+}
+
+// ============================================================
+// LOGIN PAGE
+// ============================================================
+function buildLogin() {
+  return `
+  <div class="auth-wrapper">
+    <div class="auth-card animate">
+      <div class="auth-title">Welcome Back</div>
+      <div class="auth-subtitle">Login to your JNTU student portal</div>
+      ${state.error ? `<div class="form-error">${state.error}</div>` : ""}
+      ${state.success ? `<div class="form-success">${state.success}</div>` : ""}
+      <div class="form-row">
+        <label>Roll Number / Email</label>
+        <input type="text" id="login-roll" placeholder="22A91A0501 or email"/>
+      </div>
+      <div class="form-row">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Enter your password"/>
+      </div>
+      <div style="text-align:right;margin-bottom:12px;">
+        <a href="#" style="font-size:0.82rem;color:var(--text2);text-decoration:none;" 
+           onmouseover="this.style.color='var(--accent3)'" onmouseout="this.style.color='var(--text2)'">
+          Forgot Password?
+        </a>
+      </div>
+      <button class="btn-primary" onclick="handleLogin()">Login →</button>
+      <div class="auth-link">Don't have an account? <a href="#" onclick="goTo('register');return false;">Register here</a></div>
+      <div class="divider">quick demo login</div>
+      <button class="btn-secondary" style="width:100%" onclick="demoLogin()">Use Demo Account (22A91A0501)</button>
+    </div>
+  </div>
+  <footer>© 2024 JNTU Hyderabad • Jawaharlal Nehru Technological University</footer>`;
+}
+
+// ============================================================
+// HOME PAGE
+// ============================================================
+function buildHome() {
+  const tabs = ["dashboard","timetable","results","notifications"];
+  const labels = { dashboard:"🏠 Dashboard", timetable:"📅 Timetable", results:"📊 Results", notifications:`🔔 Notifications ${getUnreadBadge()}` };
+  const navHtml = `<div class="nav-tabs">
+    ${tabs.map(t=>`<button class="nav-tab ${state.homeTab===t?"active":""}" onclick="setTab('${t}')">${labels[t]}</button>`).join("")}
+  </div>`;
+
+  let content = "";
+  if (state.homeTab === "dashboard") content = buildDashboard();
+  else if (state.homeTab === "timetable") content = buildTimetable();
+  else if (state.homeTab === "results") content = buildResults();
+  else if (state.homeTab === "notifications") content = buildNotifications();
+
+  return navHtml + `<main>${content}</main><footer>© 2024 JNTU Hyderabad • All Rights Reserved</footer>`;
+}
+
+function getUnreadBadge() {
+  const u = state.notifications.filter(n=>!n.isRead).length;
+  return u ? `<span style="background:var(--accent);color:#fff;border-radius:10px;padding:1px 6px;font-size:0.7rem;margin-left:4px;">${u}</span>` : "";
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function buildDashboard() {
+  const att = MOCK_ATTENDANCE.overall;
+  const statusClass = att >= 85 ? "status-safe" : att >= 75 ? "status-warn" : "status-crit";
+  const statusText = att >= 85 ? "✅ Safe" : att >= 75 ? "⚠️ Warning" : "❌ Critical";
+  const r = 40, circ = 2*Math.PI*r;
+  const offset = circ - (att/100)*circ;
+
+  // Attendance card
+  const attCard = `<div class="card animate animate-d1">
+    <div class="card-title"><span class="icon">📋</span>Attendance Summary</div>
+    <div class="progress-ring-wrap">
+      <div class="ring-container">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="${r}" stroke="var(--border)" stroke-width="8" fill="none"/>
+          <circle cx="50" cy="50" r="${r}" stroke="var(--accent3)" stroke-width="8" fill="none"
+            stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+            stroke-linecap="round" style="transition:stroke-dashoffset 1s ease"/>
+        </svg>
+        <div class="ring-label">${att}%</div>
+      </div>
+      <div>
+        <div style="font-size:0.83rem;color:var(--text2);margin-bottom:6px;">Overall Attendance</div>
+        <div class="attendance-big">${att}%</div>
+        <div class="status-badge ${statusClass}">${statusText}</div>
+        <div style="margin-top:12px;font-size:0.78rem;color:var(--text3);">Semester 5 • CSE • JNTU-H</div>
+      </div>
+    </div>
+    <div style="margin-top:18px;">
+      ${MOCK_ATTENDANCE.subjects.map(s=>{
+        const p = pct(s.attended,s.total);
+        const cls = p>=85?"bar-good":p>=75?"bar-warn":"bar-bad";
+        return `<div style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text2);margin-bottom:3px;">
+            <span>${s.name}</span><span>${s.attended}/${s.total} (${p}%)</span>
+          </div>
+          <div class="mid-bar-track"><div class="mid-bar-fill ${cls}" style="width:${p}%"></div></div>
+        </div>`;
+      }).join("")}
+    </div>
+  </div>`;
+
+  // Semester Marks
+  const marksCard = `<div class="card animate animate-d2">
+    <div class="card-title"><span class="icon">📝</span>Semester Marks</div>
+    <div style="display:flex;gap:20px;margin-bottom:16px;">
+      <div style="background:var(--bg2);border-radius:10px;padding:12px 20px;text-align:center;flex:1;">
+        <div style="font-size:0.75rem;color:var(--text3);margin-bottom:4px;">SGPA</div>
+        <div style="font-family:var(--font-head);font-size:1.8rem;font-weight:800;color:var(--accent3);">8.7</div>
+        <div style="font-size:0.72rem;color:var(--text3);">Semester 5</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:10px;padding:12px 20px;text-align:center;flex:1;">
+        <div style="font-size:0.75rem;color:var(--text3);margin-bottom:4px;">CGPA</div>
+        <div style="font-family:var(--font-head);font-size:1.8rem;font-weight:800;color:var(--green);">8.44</div>
+        <div style="font-size:0.72rem;color:var(--text3);">Overall</div>
+      </div>
+    </div>
+    <div class="subject-row" style="background:var(--bg2);border-radius:6px;padding:6px 10px;margin-bottom:4px;">
+      <div class="mark-head">Subject</div>
+      <div class="mark-head">Mid-1</div>
+      <div class="mark-head">Mid-2</div>
+      <div class="mark-head">End</div>
+      <div class="mark-head">Grade</div>
+    </div>
+    ${MOCK_MARKS.map(m=>`<div class="subject-row" style="padding:8px 10px;">
+      <div class="subject-name">${m.subject}</div>
+      <div class="mark-cell">${m.mid1}/25</div>
+      <div class="mark-cell">${m.mid2}/25</div>
+      <div class="mark-cell">${m.end}/75</div>
+      <div class="mark-cell"><span class="grade-badge ${getGradeClass(m.grade)}">${m.grade}</span></div>
+    </div>`).join("")}
+  </div>`;
+
+  // Mid Marks
+  const midCard = `<div class="card animate animate-d3">
+    <div class="card-title"><span class="icon">📌</span>Mid Marks</div>
+    ${MOCK_MARKS.slice(0,5).map(m=>{
+      const low1=m.mid1<15, low2=m.mid2<15;
+      return `<div class="mid-row">
+        <div class="mid-subject">${m.subject}</div>
+        <div class="mid-bars">
+          <div class="mid-bar-wrap">
+            <div class="mid-bar-label">Mid-1: ${m.mid1}/25</div>
+            <div class="mid-bar-track"><div class="mid-bar-fill ${getBarClass(m.mid1)}" style="width:${m.mid1/25*100}%"></div></div>
+          </div>
+          <div class="mid-bar-wrap">
+            <div class="mid-bar-label">Mid-2: ${m.mid2}/25</div>
+            <div class="mid-bar-track"><div class="mid-bar-fill ${getBarClass(m.mid2)}" style="width:${m.mid2/25*100}%"></div></div>
+          </div>
+        </div>
+        ${(low1||low2)?`<div class="need-imp">⚠ Needs Improvement${low1&&low2?" (Both Mids)":low1?" (Mid-1)":" (Mid-2)"}</div>`:""}
+      </div>`;
+    }).join("")}
+  </div>`;
+
+  // Academic Performance
+  const maxGpa = 10;
+  const perfCard = `<div class="card animate animate-d4">
+    <div class="card-title"><span class="icon">📈</span>Academic Performance</div>
+    <div class="chart-bars">
+      ${MOCK_CGPA.map(s=>`<div class="chart-bar-wrap">
+        <div class="chart-bar-val">${s.gpa}</div>
+        <div class="chart-bar" style="height:${s.gpa/maxGpa*72}px"></div>
+        <div class="chart-bar-label">${s.sem}</div>
+      </div>`).join("")}
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <div style="flex:1;background:var(--bg2);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:0.72rem;color:var(--text3);">Trend</div>
+        <div style="font-weight:700;color:var(--green);font-size:0.88rem;">↑ Improving</div>
+      </div>
+      <div style="flex:1;background:var(--bg2);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:0.72rem;color:var(--text3);">Overall</div>
+        <div style="font-weight:700;color:var(--accent3);font-size:0.88rem;">Excellent</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:0.8rem;color:var(--text2);background:var(--bg2);border-radius:8px;padding:10px;border-left:3px solid var(--accent);">
+      💡 Consistent improvement over recent semesters. Keep it up!
+    </div>
+  </div>`;
+
+  // Fee Details
+  const paidPct = Math.round(MOCK_FEE.paid/MOCK_FEE.total*100);
+  const feeCard = `<div class="card animate animate-d1">
+    <div class="card-title"><span class="icon">💳</span>Fee Details</div>
+    <div class="fee-row"><span class="fee-label">Total Fee</span><span class="fee-val">₹${MOCK_FEE.total.toLocaleString()}</span></div>
+    <div class="fee-row"><span class="fee-label">Paid Amount</span><span class="fee-val" style="color:var(--green)">₹${MOCK_FEE.paid.toLocaleString()}</span></div>
+    <div class="fee-row"><span class="fee-label">Pending Amount</span><span class="fee-val" style="color:var(--red)">₹${MOCK_FEE.pending.toLocaleString()}</span></div>
+    <div class="fee-row"><span class="fee-label">Due Date</span><span class="fee-val" style="color:var(--gold)">${MOCK_FEE.dueDate}</span></div>
+    <div class="fee-row"><span class="fee-label">Status</span><span class="status-badge status-warn">${MOCK_FEE.status}</span></div>
+    <div class="fee-bar-track"><div class="fee-bar-fill" style="width:${paidPct}%"></div></div>
+    <div style="font-size:0.78rem;color:var(--text2);text-align:center;">${paidPct}% paid</div>
+  </div>`;
+
+  // Teacher Profiles
+  const teachersCard = `<div class="card animate animate-d2">
+    <div class="card-title"><span class="icon">👩‍🏫</span>Teacher Profiles</div>
+    <div class="grid-3" style="gap:12px;">
+      ${MOCK_TEACHERS.map(t=>`<div class="teacher-card">
+        <div class="teacher-avatar">${getInitials(t.name)}</div>
+        <div class="teacher-name">${t.name}</div>
+        <div class="teacher-sub">${t.sub}</div>
+        <div class="teacher-dept">${t.dept}</div>
+        <div class="teacher-email">✉ ${t.email}</div>
+      </div>`).join("")}
+    </div>
+  </div>`;
+
+  // Academic Calendar
+  const calCard = `<div class="card animate animate-d3">
+    <div class="card-title"><span class="icon">🗓</span>Academic Calendar</div>
+    ${buildMiniCalendar()}
+    <div class="cal-legend">
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(239,68,68,0.5)"></div>Exam</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(16,185,129,0.5)"></div>Holiday</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(245,158,11,0.5)"></div>Fee Due</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--accent)"></div>Today</div>
+    </div>
+  </div>`;
+
+  return `
+    <div class="page-header animate">
+      <div class="page-title">Student Dashboard</div>
+      <div class="page-subtitle">${state.user.name} • ${state.user.roll} • ${state.user.branch} • Semester ${state.user.semester}</div>
+    </div>
+    <div class="grid-2" style="margin-bottom:20px;">${attCard}${marksCard}</div>
+    <div class="grid-3" style="margin-bottom:20px;">${midCard}${perfCard}${feeCard}</div>
+    <div style="margin-bottom:20px;">${teachersCard}</div>
+    <div>${calCard}</div>`;
+}
+
+// ============================================================
+// MINI CALENDAR
+// ============================================================
+function buildMiniCalendar() {
+  const months = ["Nov 2024","Dec 2024","Jan 2025","Feb 2025","Mar 2025","Apr 2025","May 2025","Jun 2025"];
+  const examDays = { "Dec 2024": [10,11,12,13,14], "May 2025": [5,6,7,8,9,10] };
+  const holidays = { "Nov 2024": [2], "Dec 2024": [25], "Jan 2025": [1,14,26], "Apr 2025": [14] };
+  const feeDays = { "Dec 2024": [15], "Mar 2025": [15] };
+  const todayDay = 28; const todayMonth = "Nov 2024";
+
+  return `<div class="cal-grid">
+    ${months.map(m => {
+      const [mn, yr] = m.split(" ");
+      const monthNames = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+      const firstDay = new Date(yr, monthNames[mn]-1, 1).getDay();
+      const daysInMonth = new Date(yr, monthNames[mn], 0).getDate();
+      const exams = examDays[m]||[];
+      const hols = holidays[m]||[];
+      const fees = feeDays[m]||[];
+      let cells = "";
+      ["S","M","T","W","T","F","S"].forEach(d=>{ cells+=`<div style="font-size:0.6rem;color:var(--text3);text-align:center;">${d}</div>`; });
+      for(let i=0;i<firstDay;i++) cells+=`<div></div>`;
+      for(let d=1;d<=daysInMonth;d++) {
+        let cls = "day-cell";
+        if(exams.includes(d)) cls+=" exam";
+        else if(fees.includes(d)) cls+=" fee";
+        else if(hols.includes(d)) cls+=" holiday";
+        else if(m===todayMonth && d===todayDay) cls+=" today";
+        cells+=`<div class="${cls}">${d}</div>`;
+      }
+      return `<div class="month-card">
+        <div class="month-name">${m}</div>
+        <div class="day-grid">${cells}</div>
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+// ============================================================
+// TIMETABLE
+// ============================================================
+function buildTimetable() {
+  const periods = ["Period 1","Period 2","Break","Period 3","Period 4","Period 5","Period 6"];
+  return `
+    <div class="page-header animate">
+      <div class="page-title">Weekly Timetable</div>
+      <div class="page-subtitle">Semester 5 • CSE • Academic Year 2024-25</div>
+    </div>
+    <div class="card animate animate-d1">
+      <div class="card-title"><span class="icon">📅</span>Class Schedule</div>
+      <div class="tt-table-wrap">
+        <table class="tt-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              ${periods.map(p=>`<th>${p}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${MOCK_TIMETABLE.map(row=>`<tr>
+              <td class="tt-day">${row.day}</td>
+              ${row.periods.map((p,i)=>{
+                if(!p) return `<td class="tt-cell" style="color:var(--text3);font-size:0.75rem;">—</td>`;
+                if(p==="Break") return `<td class="tt-break">☕ Break</td>`;
+                const [sub,prof,room] = p.split("\n");
+                const isLab = room && room.toLowerCase().includes("lab");
+                return `<td class="tt-cell ${isLab?"tt-lab":""}">
+                  <div class="sub">${sub}</div>
+                  <div class="prof">${prof}</div>
+                  <div class="room">${room}</div>
+                </td>`;
+              }).join("")}
+            </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text2);">
+          <div style="width:12px;height:12px;background:rgba(37,99,235,0.1);border-radius:3px;border:1px solid rgba(37,99,235,0.3)"></div>Lab Session
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--text2);">
+          <div style="width:12px;height:12px;background:rgba(245,158,11,0.08);border-radius:3px;border:1px solid rgba(245,158,11,0.2)"></div>Break
+        </div>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+function buildResults() {
+  const sems = [...new Set(MOCK_RESULTS.map(r=>r.sem))];
+  const sel = state.resultFilter || "All";
+  const filtered = sel === "All" ? MOCK_RESULTS : MOCK_RESULTS.filter(r=>r.sem===sel);
+
+  return `
+    <div class="page-header animate">
+      <div class="page-title">Academic Results</div>
+      <div class="page-subtitle">Complete academic record • Roll: ${state.user.roll}</div>
+    </div>
+    <div class="card animate animate-d1">
+      <div class="card-title"><span class="icon">📊</span>Results</div>
+      <div class="results-filter">
+        <label style="font-size:0.83rem;color:var(--text2);">Filter by Semester:</label>
+        <select onchange="filterResults(this.value)">
+          <option value="All" ${sel==="All"?"selected":""}>All Semesters</option>
+          ${sems.map(s=>`<option value="${s}" ${sel===s?"selected":""}>${s}</option>`).join("")}
+        </select>
+        <span style="font-size:0.8rem;color:var(--text3);margin-left:auto;">${filtered.length} subjects</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Semester</th><th>Subject</th>
+              <th>Mid-1 (/25)</th><th>Mid-2 (/25)</th>
+              <th>End-term (/75)</th><th>Total (/125)</th><th>Grade</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered.map(r=>`<tr>
+              <td style="color:var(--text3);font-size:0.8rem;">${r.sem}</td>
+              <td style="font-weight:500;">${r.subject}</td>
+              <td style="text-align:center;">${r.mid1}</td>
+              <td style="text-align:center;">${r.mid2}</td>
+              <td style="text-align:center;">${r.end}</td>
+              <td style="text-align:center;font-weight:600;">${r.total}</td>
+              <td style="text-align:center;"><span class="grade-badge ${getGradeClass(r.grade)}">${r.grade}</span></td>
+            </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function buildNotifications() {
+  const unread = state.notifications.filter(n=>!n.isRead).length;
+  return `
+    <div class="page-header animate">
+      <div class="page-title">Notifications</div>
+      <div class="page-subtitle">${unread} unread notification${unread!==1?"s":""}</div>
+    </div>
+    <div class="card animate animate-d1">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="card-title" style="margin-bottom:0;"><span class="icon">🔔</span>All Notifications</div>
+        ${unread>0?`<button class="btn-secondary" onclick="markAllRead()">Mark all as read</button>`:""}
+      </div>
+      ${state.notifications.map(n=>`
+        <div class="notif-item" onclick="markRead(${n.id})">
+          <div class="notif-dot ${n.isRead?"read":""}"></div>
+          <div class="notif-content">
+            <div class="notif-title" style="color:${n.isRead?"var(--text2)":"var(--text)"}">${n.title}</div>
+            <div class="notif-msg">${n.message}</div>
+            <div class="notif-date">${n.date}</div>
+          </div>
+          <span class="notif-badge ${n.isRead?"read-b":"unread"}">${n.isRead?"Read":"Unread"}</span>
+        </div>`).join("")}
+    </div>`;
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+function goTo(page) {
+  state.page = page; state.error = ""; state.success = "";
+  render();
+}
+
+function handleRegister() {
+  const name=v("reg-name"), roll=v("reg-roll"), branch=v("reg-branch"),
+        sem=v("reg-sem"), email=v("reg-email"), pass=v("reg-pass"), cpass=v("reg-cpass");
+  if (!name||!roll||!branch||!sem||!email||!pass) { setError("All fields are required."); return; }
+  if (pass!==cpass) { setError("Passwords do not match."); return; }
+  if (pass.length<6) { setError("Password must be at least 6 characters."); return; }
+  // Simulate API call
+  state.success="Registration successful! Redirecting to login...";
+  state.error="";
+  render();
+  setTimeout(()=>{ state.page="login"; state.success="Registration successful! Please login."; render(); }, 1500);
+}
+
+function handleLogin() {
+  const roll=v("login-roll"), pass=v("login-pass");
+  if (!roll||!pass) { setError("Please enter roll number and password."); return; }
+  // Simulate auth
+  if (pass.length<3) { setError("Invalid credentials. Please try again."); return; }
+  loginSuccess({ ...MOCK_USER, roll: roll });
+}
+
+function demoLogin() {
+  loginSuccess(MOCK_USER);
+}
+
+function loginSuccess(user) {
+  state.user = user; state.page = "home"; state.homeTab = "dashboard";
+  state.error = ""; state.success = "";
+  render();
+}
+
+function handleLogout() {
+  state.user = null; state.page = "login"; state.error = ""; state.success = "";
+  render();
+}
+
+function setTab(tab) { state.homeTab = tab; render(); }
+
+function filterResults(val) { state.resultFilter = val; render(); }
+
+function markRead(id) {
+  const n = state.notifications.find(n=>n.id===id);
+  if (n) n.isRead = true;
+  render();
+}
+
+function markAllRead() {
+  state.notifications.forEach(n=>n.isRead=true);
+  render();
+}
+
+function setError(msg) { state.error = msg; state.success = ""; render(); }
+
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : "";
+}
+
+// ============================================================
+// INIT
+// ============================================================
+render();
+</script>
+</body>
+</html>

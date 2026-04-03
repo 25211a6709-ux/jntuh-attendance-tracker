@@ -4,7 +4,9 @@
 Smart Attendance Tracker using AI
 
 **Problem Statement**
-Students cannot easily track their daily attendance. Attendance percentage is important for exams and scholarships. There is no simple system to monitor attendance regularly.
+Students cannot easily track their daily attendance. 
+Attendance percentage is important for exams and scholarships. 
+There is no simple system to monitor attendance regularly.
 
 **Solution**
 We developed a smart attendance tracking system that helps students check attendance anytime and predict future attendance status using machine learning.
